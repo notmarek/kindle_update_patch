@@ -3,6 +3,11 @@ if [[ ! -n $GITHUB_OUTPUT ]]; then
     GITHUB_OUTPUT=/dev/null
 fi
 
+KINDLETOOL_PATH=/usr/bin/kindletool
+if [ ! -f $KINDLETOOL_PATH ]; then
+    KINDLETOOL_PATH="$(pwd)/kindletool"
+fi
+
 if [[ ! -n $1 ]]; then
     echo "arg1 is required"
     exit 1
@@ -41,7 +46,7 @@ if [ ! -n "$KINDLE_MODEL" ]; then
     echo "kindlemodel ($KINDLE_MODEL) must be an actual device supported by kindletool"
     exit 1
 fi
-echo "kindlemodel: $KINDLE_MODEL"
+
 echo "version=$KINDLE_VERSION" >>$GITHUB_OUTPUT
 echo "model=$KINDLE_MODEL" >>$GITHUB_OUTPUT
 
@@ -55,7 +60,7 @@ if [ "$(id -u)" -ne 0 ] ; then
 fi
 
 echo "Extracting OTA update"
-kindletool extract $1 unpacked > /dev/null
+$KINDLETOOL_PATH extract $1 unpacked > /dev/null
 
 echo "Cleaning up sig files and update-payload.dat"
 cd unpacked
@@ -102,7 +107,7 @@ echo "Repacking OTA update"
 umount rootfs
 gzip rootfs.img
 rm -rf rootfs
-kindletool create recovery2 -d $KINDLE_MODEL . ../update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin > /dev/null
+$KINDLETOOL_PATH create recovery2 -d $KINDLE_MODEL . ../update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin > /dev/null
 
 cd ..
 OUTPUT="$(pwd)/update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin"
