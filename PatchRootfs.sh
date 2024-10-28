@@ -111,7 +111,7 @@ $KINDLETOOL_PATH create recovery2 -d $KINDLE_MODEL . ../update_${KINDLE_MODEL}_$
 
 cd ..
 OUTPUT="$(pwd)/update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin"
-echo "version=$OUTPUT" >>$GITHUB_OUTPUT
+echo "package=$OUTPUT" >>$GITHUB_OUTPUT
 
 echo "Finishing up"
 rm -rf unpacked
