@@ -42,8 +42,7 @@ jobs:
         id: patch_update
         run: |
           cd ${{ github.workspace }}/master
-          echo "$GITHUB_OUTPUT"
-          ./PatchRootfs.sh *.bin
+          GITHUB_OUTPUT="$GITHUB_OUTPUT" ./PatchRootfs.sh *.bin
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4.3.0
