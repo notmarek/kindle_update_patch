@@ -33,7 +33,7 @@ jobs:
         id: download_ota
         run: |
           cd ${{ github.workspace }}/master
-          wget "$YOUTUBE_URL" --no-verbose
+          wget "$UPDATE_URL" --no-verbose --trust-server-names
 
         env:
           UPDATE_URL: ${{ inputs.ota_url }}
