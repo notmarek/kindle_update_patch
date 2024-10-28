@@ -42,7 +42,7 @@ jobs:
         id: patch_update
         run: |
           cd ${{ github.workspace }}/master
-          GITHUB_OUTPUT="$GITHUB_OUTPUT" ./PatchRootfs.sh *.bin
+          ./PatchRootfs.sh *.bin
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4.3.0

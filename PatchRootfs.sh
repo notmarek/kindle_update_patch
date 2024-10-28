@@ -1,4 +1,13 @@
 #!/bin/bash
+if [ "$(id -u)" -ne 0 ] ; then
+    if [ -f /usr/bin/sudo ]; then
+        /usr/bin/sudo GITHUB_OUTPUT="$GITHUB_OUTPUT" $0 $1 $2
+        exit 0
+    fi
+    echo "You need to run this as root"
+    exit 1
+fi
+
 if [[ ! -n "$GITHUB_OUTPUT" ]]; then
     echo "GITHUB_OUTPUT is not set assuming local run $GITHUB_OUTPUT"
     GITHUB_OUTPUT=/dev/null
@@ -50,15 +59,6 @@ fi
 
 echo "version=$KINDLE_VERSION" >>$GITHUB_OUTPUT
 echo "model=$KINDLE_MODEL" >>$GITHUB_OUTPUT
-
-if [ "$(id -u)" -ne 0 ] ; then
-    if [ -f /usr/bin/sudo ]; then
-        /usr/bin/sudo $0 $1 $2
-        exit 0
-    fi
-    echo "You need to run this as root"
-    exit 1
-fi
 
 echo "Extracting OTA update"
 $KINDLETOOL_PATH extract $1 unpacked > /dev/null
