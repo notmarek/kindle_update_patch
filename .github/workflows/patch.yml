@@ -47,6 +47,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: update_patched_${{ steps.patch_update.outputs.model }}_${{ steps.patch_update.outputs.version }}
+          name: update_${{ steps.patch_update.outputs.model }}_${{ steps.patch_update.outputs.version }}_patched
           path: ${{ steps.patch_update.outputs.package }}
           if-no-files-found: error

@@ -60,6 +60,20 @@ fi
 echo "version=$KINDLE_VERSION" >>$GITHUB_OUTPUT
 echo "model=$KINDLE_MODEL" >>$GITHUB_OUTPUT
 
+
+GET_FROM_KINDLETOOL_CONVERT () {
+    echo $($KINDLETOOL_PATH convert -i $1 2> >( grep "$2" ) | sed "s/$2\s*//")
+}
+
+
+echo "Grabbing info from OTA update"
+KINDLE_TARGET_OTA=$(GET_FROM_KINDLETOOL_CONVERT $1 "Target OTA")
+KINDLE_PLATFORM=$(GET_FROM_KINDLETOOL_CONVERT $1 "Platform")
+KINDLE_MAGIC1=$(GET_FROM_KINDLETOOL_CONVERT $1 "Magic 1")
+KINDLE_MAGIC2=$(GET_FROM_KINDLETOOL_CONVERT $1 "Magic 2")
+KINDLE_MINOR=$(GET_FROM_KINDLETOOL_CONVERT $1 "Minor")
+
+
 echo "Extracting OTA update"
 $KINDLETOOL_PATH extract $1 unpacked > /dev/null
 
@@ -108,7 +122,7 @@ echo "Repacking OTA update"
 umount rootfs
 gzip rootfs.img
 rm -rf rootfs
-$KINDLETOOL_PATH create recovery2 -d $KINDLE_MODEL . ../update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin > /dev/null
+$KINDLETOOL_PATH create recovery2 -t $KINDLE_TARGET_OTA -m $KINDLE_MINOR -p $KINDLE_PLATFORM -1 $KINDLE_MAGIC1 -2 $KINDLE_MAGIC2 -d $KINDLE_MODEL . ../update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin > /dev/null
 
 cd ..
 OUTPUT="$(pwd)/update_${KINDLE_MODEL}_${KINDLE_VERSION}_patched.bin"
