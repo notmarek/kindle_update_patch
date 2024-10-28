@@ -1,0 +1,15 @@
+240a241,254
+>   
+>   # upstart hook potentially useful for OTA updates, the files will not be present on /var/local all the time.
+>   # Do not delete this code
+>   var_local_fixup=/var/local/system/fixup
+>   var_local_onetimefixup=/var/local/system/onetimefixup
+>   if [ -e $var_local_fixup ]; then
+>        f_log I filesystems_var_local runfixup "Running $var_local_fixup"
+>        $var_local_fixup
+>   fi
+>   if [ -e $var_local_onetimefixup ]; then
+>        f_log I filesystems_var_local runonetimefixup "Running $var_local_onetimefixup"
+>        $var_local_onetimefixup
+>        rm $var_local_onetimefixup
+>   fi

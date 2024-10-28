@@ -1,0 +1,52 @@
+name: Patch kindle update file
+
+on:
+  workflow_dispatch:
+    inputs:
+      ota_url:
+        description: "Direct URL to the kindle update file."
+        default: ""
+        required: true
+        type: string
+      override_model:
+        description: "Ignore model in udpate filename and use the specified one"
+        default: ""
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  patch:
+    name: Patch update
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v4.1.1
+        with:
+          path: master
+
+      - name: Download Update File
+        id: download_ota
+        run: |
+          cd ${{ github.workspace }}/master
+          wget "$YOUTUBE_URL" --no-verbose
+
+        env:
+          UPDATE_URL: ${{ inputs.ota_url }}
+
+      - name: Patch Update
+        id: patch_update
+        run: |
+          cd ${{ github.workspace }}/master
+          ./PatchRootfs.sh *.bin
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: update_patched_${{ steps.patch_update.outputs.model }}_${{ steps.patch_update.outputs.version }}
+          path: ${{ steps.patch_update.outputs.package }}
+          if-no-files-found: error
