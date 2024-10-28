@@ -1,5 +1,7 @@
 #!/bin/bash
-
+if [[ ! -n $GITHUB_OUTPUT ]]; then
+    GITHUB_OUTPUT=/dev/null
+fi
 
 if [[ ! -n $1 ]]; then
     echo "arg1 is required"
@@ -12,11 +14,19 @@ if [ ! -f $1 ]; then
     exit 1
 fi
 
+declare -A models
+models[kindle_11th]="basic4"
+models[kindle_10th]="basic3"
+models[kindle_all_new_paperwhite_v2]="paperwhite4"
+models[kindle_all_new_paperwhite_11th]="paperwhite5"
+models[kindle_scribe]="scribe"
+models[kindle_all_new_oasis_v2]="oasis3"
+
 KINDLE_MODEL=$2
 KINDLE_VERSION="UNK"
 if [ ! -n "$KINDLE_MODEL" ]; then
     if [[ "$1" =~ ^update_(.*?)_(.*?)\.bin ]]; then
-        KINDLE_MODEL=${BASH_REMATCH[1]}
+        KINDLE_MODEL=${models[${BASH_REMATCH[1]}]}
         KINDLE_VERSION=${BASH_REMATCH[2]}
         echo "Detected $KINDLE_MODEL version $KINDLE_VERSION"
         if [[ "$KINDLE_VERSION" =~ ^([1-9]*?)\.([1-9]*?)\.([1-9]*?):?(\.|$) ]]; then
@@ -31,10 +41,9 @@ if [ ! -n "$KINDLE_MODEL" ]; then
     echo "kindlemodel ($KINDLE_MODEL) must be an actual device supported by kindletool"
     exit 1
 fi
-
+echo "kindlemodel: $KINDLE_MODEL"
 echo "version=$KINDLE_VERSION" >>$GITHUB_OUTPUT
 echo "model=$KINDLE_MODEL" >>$GITHUB_OUTPUT
-
 
 if [ "$(id -u)" -ne 0 ] ; then
     if [ -f /usr/bin/sudo ]; then
