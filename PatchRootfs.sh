@@ -1,5 +1,6 @@
 #!/bin/bash
-if [[ ! -n $GITHUB_OUTPUT ]]; then
+if [[ ! -n "$GITHUB_OUTPUT" ]]; then
+    echo "GITHUB_OUTPUT is not set assuming local run"
     GITHUB_OUTPUT=/dev/null
 fi
 
